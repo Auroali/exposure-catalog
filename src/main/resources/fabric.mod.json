@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "exposurecatalog",
+  "version": "${version}",
+  "name": "Exposure Catalog",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/exposurecatalog/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.auroali.exposurecatalog.ExposureCatalog"
+    ],
+    "client": [
+      "com.auroali.exposurecatalog.ExposureCatalogClient"
+    ],
+    "fabric-datagen": [
+      "com.auroali.exposurecatalog.ExposureCatalogDataGenerator"
+    ],
+    "cardinal-components-entity": [
+      "com.auroali.exposurecatalog.common.components.ECEntityComponents"
+    ]
+  },
+  "mixins": [
+    "exposurecatalog.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "exposure": ">=1.7.7",
+    "cardinal-components-base": ">=5.2.2"
+  },
+  "suggests": {
+    "another-mod": "*"
+  },
+  "custom": {
+    "cardinal-components": [
+      "exposurecatalog:catalog"
+    ]
+  }
+}
