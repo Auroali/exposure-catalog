@@ -11,5 +11,7 @@ public class ECLangProvider extends FabricLanguageProvider {
     @Override
     public void generateTranslations(TranslationBuilder translationBuilder) {
         translationBuilder.add("gui.exposurecatalog.locked", "???");
+        translationBuilder.add("exposurecatalog.toast.title", "Catalog Updated");
+        translationBuilder.add("exposurecatalog.toast.description", "%d new entries added");
     }
 }

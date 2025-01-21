@@ -32,7 +32,6 @@ public class CatalogTrackerComponent implements Component, AutoSyncedComponent {
 
     public void addEntityToCatalog(EntityType<?> type) {
         this.cataloguedEntities.add(type);
-        ECEntityComponents.CATALOG_TRACKER.sync(this.holder);
     }
 
     @Override

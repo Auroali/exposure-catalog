@@ -74,7 +74,7 @@ public class CatalogWidget extends AbstractWidget {
         Vec3 scaleFactor = this.entry.guiScale();
         float height = this.entity.getBbHeight();
         float width = this.entity.getBbWidth();
-        double newScale = Math.min(1.d / height, 1.d / width);
+        double newScale = Math.min(0.9d / height, 0.65d / width);
         return scaleFactor.multiply(newScale, newScale, newScale);
     }
 

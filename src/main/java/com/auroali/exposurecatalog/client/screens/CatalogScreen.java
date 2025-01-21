@@ -20,6 +20,7 @@ public class CatalogScreen extends Screen {
     private int ticks;
     private double scrollOffset;
     private int rows;
+    private boolean scrolling;
 
     public CatalogScreen() {
         super(GameNarrator.NO_TITLE);
@@ -32,14 +33,12 @@ public class CatalogScreen extends Screen {
         int widgetX = (this.width - 256) / 2 + 9;
         int widgetY = (this.height - 153) / 2 + 18;
         CatalogTrackerComponent catalog = ECEntityComponents.CATALOG_TRACKER.get(this.minecraft.player);
-        while (entryIndex < 50) {
-            for (CatalogEntry entry : ECRegistries.CATALOG.getEntries()) {
-                boolean unlocked = catalog.hasCataloguedEntity(entry.entity());
-                int x = (entryIndex % 5) * 32;
-                int y = (entryIndex / 5) * 32;
-                this.addRenderableWidget(CatalogWidget.fromEntry(entry, widgetX + x, widgetY + y, unlocked));
-                entryIndex++;
-            }
+        for (CatalogEntry entry : ECRegistries.CATALOG.getEntries()) {
+            boolean unlocked = catalog.hasCataloguedEntity(entry.entity());
+            int x = (entryIndex % 5) * 32;
+            int y = (entryIndex / 5) * 32;
+            this.addRenderableWidget(CatalogWidget.fromEntry(entry, widgetX + x, widgetY + y, unlocked));
+            entryIndex++;
         }
         this.rows = entryIndex / 5;
         this.updateWidgetOffsets();
@@ -61,7 +60,7 @@ public class CatalogScreen extends Screen {
         super.render(guiGraphics, i, j, delta);
         int x = (this.width - 256) / 2;
         int y = (this.height - 153) / 2;
-        guiGraphics.blit(TEXTURES, x + 175, y + 18 + (int) (this.getScrollPercent() * 113), 0, 186, 12, 15);
+        guiGraphics.blit(TEXTURES, x + 175, y + 18 + (int) (this.getScrollPercent() * 113), this.canScroll() ? 0 : 12, 186, 12, 15);
         if (this.getFocused() instanceof CatalogWidget catalogWidget && catalogWidget.isUnlocked()) {
             guiGraphics.enableScissor(x + 193, y + 18, x + 248, y + 73);
             catalogWidget.renderCatalogEntity(guiGraphics, x + 193, y + 18, 55, 55, 55.f, catalogWidget.getRotation(this.ticks + delta));
@@ -99,6 +98,19 @@ public class CatalogScreen extends Screen {
         return true;
     }
 
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && this.isMouseInScrollBar(mouseX, mouseY))
+            this.scrolling = true;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.scrolling = false;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
     public boolean canScroll() {
         return this.rows > 4;
     }
@@ -117,12 +129,18 @@ public class CatalogScreen extends Screen {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         int x = (this.width - 256) / 2;
         int y = (this.height - 153) / 2;
-        if (!this.canScroll() || mouseX < x + 175 || mouseX > x + 186 || mouseY < y + 18 || mouseY > y + 145)
+        if (!this.canScroll() || !this.isMouseInScrollBar(mouseX, mouseY) && !this.scrolling)
             return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 
         this.scrollOffset = Mth.clamp((mouseY - (y + 18)) / 127.d * this.rows, 0, this.rows);
         this.updateWidgetOffsets();
         return true;
+    }
+
+    public boolean isMouseInScrollBar(double mouseX, double mouseY) {
+        int x = (this.width - 256) / 2;
+        int y = (this.height - 153) / 2;
+        return mouseX >= x + 175 && mouseX <= x + 186 && mouseY >= y + 18 && mouseY <= y + 145;
     }
 
     @Override
@@ -132,7 +150,8 @@ public class CatalogScreen extends Screen {
             int i = this.children().indexOf(catalogWidget);
             int row = i / 5;
             if (!this.isRowVisible(row)) {
-                this.scrollOffset = row;
+                this.scrollOffset += row - ((int) this.scrollOffset + 3);
+                this.scrollOffset = Mth.clamp(this.scrollOffset, 0, this.rows);
                 this.updateWidgetOffsets();
             }
         }

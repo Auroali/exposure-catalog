@@ -4,6 +4,7 @@ import com.auroali.exposurecatalog.common.catalog.CatalogEntry;
 import com.auroali.exposurecatalog.common.catalog.CatalogEntryReloader;
 import com.auroali.exposurecatalog.common.components.CatalogTrackerComponent;
 import com.auroali.exposurecatalog.common.components.ECEntityComponents;
+import com.auroali.exposurecatalog.common.network.CatalogToastS2C;
 import com.auroali.exposurecatalog.common.network.SyncCatalogEntriesS2C;
 import com.auroali.exposurecatalog.common.registry.ECRegistries;
 import io.github.mortuusars.exposure.camera.infrastructure.FrameData;
@@ -49,11 +50,20 @@ public class ExposureCatalog implements ModInitializer {
             CatalogTrackerComponent catalog = ECEntityComponents.CATALOG_TRACKER.get(serverPlayer);
 
             ListTag entitiesInFrame = compoundTag.getList(FrameData.ENTITIES_IN_FRAME, Tag.TAG_COMPOUND);
+            int numCatalogued = 0;
             for (int i = 0; i < entitiesInFrame.size(); i++) {
                 CompoundTag entity = entitiesInFrame.getCompound(i);
                 ResourceLocation id = ResourceLocation.tryParse(entity.getString(FrameData.ENTITY_ID));
                 EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(id);
-                catalog.addEntityToCatalog(entityType);
+                if (!catalog.hasCataloguedEntity(entityType)) {
+                    numCatalogued++;
+                    catalog.addEntityToCatalog(entityType);
+                }
+            }
+            
+            if (numCatalogued > 0) {
+                ServerPlayNetworking.send(serverPlayer, new CatalogToastS2C(numCatalogued));
+                ECEntityComponents.CATALOG_TRACKER.sync(serverPlayer);
             }
         });
     }

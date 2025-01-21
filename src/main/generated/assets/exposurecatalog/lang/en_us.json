@@ -1,3 +1,5 @@
 {
+  "exposurecatalog.toast.description": "%d new entries added",
+  "exposurecatalog.toast.title": "Catalog Updated",
   "gui.exposurecatalog.locked": "???"
 }
