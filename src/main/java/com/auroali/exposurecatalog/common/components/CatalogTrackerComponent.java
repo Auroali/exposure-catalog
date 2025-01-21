@@ -13,11 +13,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-public class CatalogTrackerComponent implements Component, AutoSyncedComponent {
+public class CatalogTrackerComponent implements Component, AutoSyncedComponent, Iterable<EntityType<?>> {
     private final Player holder;
     private Set<EntityType<?>> cataloguedEntities;
 
@@ -78,5 +81,18 @@ public class CatalogTrackerComponent implements Component, AutoSyncedComponent {
     @Override
     public void applySyncPacket(FriendlyByteBuf buf) {
         this.cataloguedEntities = buf.readCollection(HashSet::new, buffer -> buffer.readById(BuiltInRegistries.ENTITY_TYPE));
+    }
+
+    public boolean removeCataloguedEntity(EntityType<?> type) {
+        return this.cataloguedEntities.remove(type);
+    }
+
+    @Override
+    public @NotNull Iterator<EntityType<?>> iterator() {
+        return this.cataloguedEntities.iterator();
+    }
+
+    public Collection<EntityType<?>> getCataloguedEntities() {
+        return this.cataloguedEntities;
     }
 }

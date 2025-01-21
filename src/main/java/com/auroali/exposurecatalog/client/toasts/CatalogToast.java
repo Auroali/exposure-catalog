@@ -2,7 +2,6 @@ package com.auroali.exposurecatalog.client.toasts;
 
 import com.auroali.exposurecatalog.ExposureCatalog;
 import io.github.mortuusars.exposure.Exposure;
-import io.github.mortuusars.exposure.item.CameraItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;

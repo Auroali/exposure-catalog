@@ -2,6 +2,7 @@ package com.auroali.exposurecatalog;
 
 import com.auroali.exposurecatalog.common.catalog.CatalogEntry;
 import com.auroali.exposurecatalog.common.catalog.CatalogEntryReloader;
+import com.auroali.exposurecatalog.common.commands.CatalogCommand;
 import com.auroali.exposurecatalog.common.components.CatalogTrackerComponent;
 import com.auroali.exposurecatalog.common.components.ECEntityComponents;
 import com.auroali.exposurecatalog.common.network.CatalogToastS2C;
@@ -10,6 +11,7 @@ import com.auroali.exposurecatalog.common.registry.ECRegistries;
 import io.github.mortuusars.exposure.camera.infrastructure.FrameData;
 import io.github.mortuusars.exposure.fabric.api.event.FrameAddedCallback;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -43,6 +45,10 @@ public class ExposureCatalog implements ModInitializer {
             ServerPlayNetworking.send(player, new SyncCatalogEntriesS2C(entries));
         });
 
+        CommandRegistrationCallback.EVENT.register((commandDispatcher, commandBuildContext, commandSelection) ->
+          commandDispatcher.register(CatalogCommand.register(commandBuildContext))
+        );
+
         FrameAddedCallback.EVENT.register((serverPlayer, itemStack, compoundTag) -> {
             if (!compoundTag.contains(FrameData.ENTITIES_IN_FRAME))
                 return;
@@ -60,7 +66,7 @@ public class ExposureCatalog implements ModInitializer {
                     catalog.addEntityToCatalog(entityType);
                 }
             }
-            
+
             if (numCatalogued > 0) {
                 ServerPlayNetworking.send(serverPlayer, new CatalogToastS2C(numCatalogued));
                 ECEntityComponents.CATALOG_TRACKER.sync(serverPlayer);

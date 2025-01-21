@@ -68,9 +68,9 @@ public class CatalogScreen extends Screen {
             guiGraphics.drawWordWrap(
               this.minecraft.font,
               catalogWidget.getDescription(),
-              x + 193,
-              y + 77,
-              55,
+              x + 194,
+              y + 78,
+              54,
               -1
             );
         }

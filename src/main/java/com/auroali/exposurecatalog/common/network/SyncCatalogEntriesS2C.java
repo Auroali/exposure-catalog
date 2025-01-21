@@ -5,6 +5,7 @@ import com.auroali.exposurecatalog.common.catalog.CatalogEntry;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
@@ -26,11 +27,13 @@ public record SyncCatalogEntriesS2C(Collection<CatalogEntry> entries) implements
             double guiScaleY = buffer.readDouble();
             double guiScaleZ = buffer.readDouble();
             Component text = buffer.readComponent();
+            CompoundTag tag = buffer.readNbt();
             return new CatalogEntry(
               type,
               new Vec3(guiOffsetX, guiOffsetY, guiOffsetZ),
               new Vec3(guiScaleX, guiScaleY, guiScaleZ),
-              text
+              text,
+              tag
             );
         }));
     }
@@ -46,6 +49,7 @@ public record SyncCatalogEntriesS2C(Collection<CatalogEntry> entries) implements
             buffer.writeDouble(entry.guiScale().y());
             buffer.writeDouble(entry.guiScale().z());
             buffer.writeComponent(entry.text());
+            buffer.writeNbt(entry.tag());
         });
     }
 

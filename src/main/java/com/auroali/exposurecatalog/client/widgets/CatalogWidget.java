@@ -37,6 +37,8 @@ public class CatalogWidget extends AbstractWidget {
 
     public static CatalogWidget fromEntry(CatalogEntry entry, int x, int y, boolean unlocked) {
         Entity entity = entry.entity().create(Minecraft.getInstance().level);
+        if (entry.tag() != null)
+            entity.load(entry.tag());
         CatalogWidget widget = new CatalogWidget(entry, entity, x, y);
         widget.setX(x);
         widget.setY(y);

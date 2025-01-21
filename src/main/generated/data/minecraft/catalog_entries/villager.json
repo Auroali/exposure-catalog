@@ -1,6 +1,6 @@
 {
   "description": {
-    "text": ""
+    "text": "capitalism?"
   },
   "guiOffset": [
     0.0,
@@ -11,5 +11,10 @@
     1.0,
     1.0,
     1.0
-  ]
+  ],
+  "nbt": {
+    "VillagerData": {
+      "profession": "minecraft:librarian"
+    }
+  }
 }

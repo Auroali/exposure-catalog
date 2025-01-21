@@ -1,6 +1,7 @@
 package com.auroali.exposurecatalog.datagen.builders;
 
 import com.auroali.exposurecatalog.common.catalog.CatalogEntry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
@@ -12,12 +13,14 @@ public class CatalogEntryBuilder {
     Vec3 guiOffset;
     Vec3 guiScale;
     Component description;
+    CompoundTag tag;
 
     private CatalogEntryBuilder(EntityType<?> type, Vec3 guiOffset, Vec3 guiScale, Component description) {
         this.type = type;
         this.guiOffset = guiOffset;
         this.guiScale = guiScale;
         this.description = description;
+        this.tag = null;
     }
 
     public static CatalogEntryBuilder builder(EntityType<?> type) {
@@ -51,12 +54,23 @@ public class CatalogEntryBuilder {
         return this.description(Component.literal(text));
     }
 
+    public CatalogEntryBuilder tag(Consumer<CompoundTag> tag) {
+        CompoundTag nbtTag = new CompoundTag();
+        tag.accept(nbtTag);
+        return this.tag(nbtTag);
+    }
+
+    public CatalogEntryBuilder tag(CompoundTag tag) {
+        this.tag = tag;
+        return this;
+    }
+
     public CatalogEntryBuilder translatableDescription(String key) {
         return this.description(Component.translatable(key));
     }
 
     public CatalogEntry build() {
-        return new CatalogEntry(this.type, this.guiOffset, this.guiScale, this.description);
+        return new CatalogEntry(this.type, this.guiOffset, this.guiScale, this.description, this.tag);
     }
 
     public void offerTo(Consumer<CatalogEntry> consumer) {

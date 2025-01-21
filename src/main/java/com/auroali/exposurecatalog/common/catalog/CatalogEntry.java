@@ -1,13 +1,16 @@
 package com.auroali.exposurecatalog.common.catalog;
 
+import com.auroali.exposurecatalog.ExposureCatalog;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 
-public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, Component text) {
+public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, Component text, CompoundTag tag) {
 
     public static CatalogEntry fromJson(EntityType<?> entity, JsonObject object) {
         if (!object.has("description"))
@@ -20,6 +23,7 @@ public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, 
         double guiScaleX = 1.d;
         double guiScaleY = 1.d;
         double guiScaleZ = 1.d;
+        CompoundTag tag = null;
 
 
         if (object.has("guiOffset")) {
@@ -36,11 +40,18 @@ public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, 
             guiScaleZ = guiScale.get(2).getAsDouble();
         }
 
+        if (object.has("nbt")) {
+            tag = CompoundTag.CODEC.parse(JsonOps.INSTANCE, object.get("nbt"))
+              .resultOrPartial(ExposureCatalog.LOGGER::error)
+              .orElse(null);
+        }
+
         return new CatalogEntry(
           entity,
           new Vec3(guiOffsetX, guiOffsetY, guiOffsetZ),
           new Vec3(guiScaleX, guiScaleY, guiScaleZ),
-          text
+          text,
+          tag
         );
     }
 
@@ -57,5 +68,11 @@ public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, 
         object.add("guiScale", guiScale);
         object.add("guiOffset", guiOffset);
         object.add("description", Component.Serializer.toJsonTree(this.text));
+
+        if (this.tag != null) {
+            CompoundTag.CODEC.encodeStart(JsonOps.INSTANCE, this.tag)
+              .resultOrPartial(ExposureCatalog.LOGGER::error)
+              .ifPresent(element -> object.add("nbt", element));
+        }
     }
 }
