@@ -1,17 +1,20 @@
 package com.auroali.exposurecatalog.client.toasts;
 
+import com.auroali.exposurecatalog.ExposureCatalog;
 import io.github.mortuusars.exposure.Exposure;
 import io.github.mortuusars.exposure.item.CameraItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class CatalogToast implements Toast {
     public static final Component TITLE = Component.translatable("exposurecatalog.toast.title");
     private static final long DISPLAY_TIME = 5000L;
     private static final ItemStack ICON = new ItemStack(Exposure.Items.CAMERA.get());
+    private static final ResourceLocation TEXTURE = ExposureCatalog.id("textures/gui/toasts.png");
     private final int newEntries;
 
     public CatalogToast(int newEntries) {
