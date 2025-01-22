@@ -6,21 +6,37 @@ import com.auroali.exposurecatalog.common.catalog.CatalogEntry;
 import com.auroali.exposurecatalog.common.components.CatalogTrackerComponent;
 import com.auroali.exposurecatalog.common.components.ECEntityComponents;
 import com.auroali.exposurecatalog.common.registry.ECRegistries;
+import com.google.common.base.Predicates;
 import net.minecraft.client.GameNarrator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
 public class CatalogScreen extends Screen {
     public static final ResourceLocation TEXTURES = ExposureCatalog.id("textures/gui/catalog.png");
+    public static final Comparator<CatalogEntry> DEFAULT_SORTER = Comparator.comparing(
+      entry -> BuiltInRegistries.ENTITY_TYPE.getKey(entry.entity()).getPath(),
+      Comparator.naturalOrder()
+    );
 
     private int ticks;
     private double scrollOffset;
     private int rows;
     private boolean scrolling;
+    private EditBox search;
+    private String previousQuery;
 
     public CatalogScreen() {
         super(GameNarrator.NO_TITLE);
@@ -29,20 +45,68 @@ public class CatalogScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        this.ticks = 0;
-        int entryIndex = 0;
+        // build the catalog entries
+        this.rebuildCatalog(CatalogQuery.checkName(this.search != null ? this.search.getValue() : null), DEFAULT_SORTER, false);
+        // search stuff
+        int searchX = (this.width - 256) / 2 + 10;
+        int searchY = (this.height - 153) / 2 + 6;
+        this.search = new EditBox(this.minecraft.font, searchX, searchY, 63, 9, Component.empty());
+        this.search.setResponder(query -> {
+            if (query.isEmpty() && this.previousQuery == null || Objects.equals(this.previousQuery, query))
+                return;
+
+            this.previousQuery = query;
+            this.rebuildCatalog(
+              CatalogQuery.checkName(query),
+              DEFAULT_SORTER,
+              true
+            );
+        });
+        this.search.setBordered(false);
+
+        this.addRenderableWidget(this.search);
+    }
+
+    @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        super.resize(minecraft, width, height);
+        this.search.setValue(this.previousQuery);
+    }
+
+    /**
+     * Rebuilds the catalog entry section
+     *
+     * @param catalogPredicate the predicate of entries to allow
+     * @param sorter           the sorting method to use
+     * @param removePrevious   whether to remove the previous entries (should only be false in init())
+     */
+    private void rebuildCatalog(Predicate<CatalogEntry> catalogPredicate, Comparator<CatalogEntry> sorter, boolean removePrevious) {
         int widgetX = (this.width - 256) / 2 + 9;
         int widgetY = (this.height - 153) / 2 + 18;
-        CatalogTrackerComponent catalog = ECEntityComponents.CATALOG_TRACKER.get(this.minecraft.player);
-        for (CatalogEntry entry : ECRegistries.CATALOG.getEntries()) {
-            boolean unlocked = catalog.hasCataloguedEntity(entry.entity());
-            int x = (entryIndex % 4) * 32;
-            int y = (entryIndex / 4) * 32;
-            this.addRenderableWidget(CatalogWidget.fromEntry(entry, widgetX + x, widgetY + y, unlocked));
-            entryIndex++;
+        if (removePrevious) {
+            this.children()
+              .stream()
+              .filter(child -> child instanceof CatalogWidget)
+              .toList()
+              .forEach(this::removeWidget);
         }
-        this.rows = entryIndex / 4 + 1;
+        AtomicInteger entryIndex = new AtomicInteger();
+        CatalogTrackerComponent catalog = ECEntityComponents.CATALOG_TRACKER.get(this.minecraft.player);
+        ECRegistries.CATALOG.getEntries()
+          .stream()
+          .filter(catalogPredicate)
+          .sorted(sorter)
+          .forEach(entry -> {
+              boolean unlocked = catalog.hasCataloguedEntity(entry.entity());
+              int index = entryIndex.getAndIncrement();
+              int x = (index % 4) * 32;
+              int y = (index / 4) * 32;
+              this.addRenderableWidget(CatalogWidget.fromEntry(entry, widgetX + x, widgetY + y, unlocked));
+          });
+        this.rows = entryIndex.get() / 4 + 1;
+        this.scrollOffset = Mth.clamp(this.scrollOffset, 0, this.rows - 1);
         this.updateWidgetOffsets();
+        this.ticks = 0;
     }
 
     @Override

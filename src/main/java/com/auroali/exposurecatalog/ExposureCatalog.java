@@ -57,20 +57,24 @@ public class ExposureCatalog implements ModInitializer {
 
             ListTag entitiesInFrame = compoundTag.getList(FrameData.ENTITIES_IN_FRAME, Tag.TAG_COMPOUND);
             int numCatalogued = 0;
+            boolean needsSync = false;
             for (int i = 0; i < entitiesInFrame.size(); i++) {
                 CompoundTag entity = entitiesInFrame.getCompound(i);
                 ResourceLocation id = ResourceLocation.tryParse(entity.getString(FrameData.ENTITY_ID));
                 EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(id);
                 if (!catalog.hasCataloguedEntity(entityType)) {
-                    numCatalogued++;
+                    needsSync = true;
                     catalog.addEntityToCatalog(entityType);
+                    if (ECRegistries.CATALOG.getFor(entityType).isPresent())
+                        numCatalogued++;
                 }
             }
 
-            if (numCatalogued > 0) {
+            if (numCatalogued > 0)
                 ServerPlayNetworking.send(serverPlayer, new CatalogToastS2C(numCatalogued));
+
+            if (needsSync)
                 ECEntityComponents.CATALOG_TRACKER.sync(serverPlayer);
-            }
         });
     }
 

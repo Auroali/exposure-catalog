@@ -158,9 +158,11 @@ public class ECCatalogProvider extends ExposureCatalogProvider {
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.FOX)
           .description(this::getDescription)
+          .scale(0.85d)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.CHICKEN)
           .description(this::getDescription)
+          .scale(0.8d)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.WOLF)
           .description(this::getDescription)
@@ -182,6 +184,7 @@ public class ECCatalogProvider extends ExposureCatalogProvider {
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.SNIFFER)
           .description(this::getDescription)
+          .scale(0.8d)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.WANDERING_TRADER)
           .description(this::getDescription)
@@ -209,17 +212,58 @@ public class ECCatalogProvider extends ExposureCatalogProvider {
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.GHAST)
           .description(this::getDescription)
+          .offset(0, 6, 0)
+          .scale(0.8d)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.VEX)
           .description(this::getDescription)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.ENDER_DRAGON)
           .description(this::getDescription)
+          .offset(0, 5, 0)
+          .scale(1.8d)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.WITHER)
           .description(this::getDescription)
           .offerTo(consumer);
         CatalogEntryBuilder.builder(EntityType.CAVE_SPIDER)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.FROG)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.TADPOLE)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.STRIDER)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.ENDERMAN)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.ENDERMITE)
+          .description(this::getDescription)
+          .scale(0.7d)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.PIG)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.COW)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.SHEEP)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.GOAT)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.OCELOT)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.MAGMA_CUBE)
+          .description(this::getDescription)
+          .offerTo(consumer);
+        CatalogEntryBuilder.builder(EntityType.ZOMBIE_VILLAGER)
           .description(this::getDescription)
           .offerTo(consumer);
     }

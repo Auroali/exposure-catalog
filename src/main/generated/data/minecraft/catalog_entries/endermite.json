@@ -1,6 +1,6 @@
 {
   "description": {
-    "translate": "catalog.entry.minecraft.fox"
+    "translate": "catalog.entry.minecraft.endermite"
   },
   "guiOffset": [
     0.0,
@@ -8,8 +8,8 @@
     0.0
   ],
   "guiScale": [
-    0.85,
-    0.85,
-    0.85
+    0.7,
+    0.7,
+    0.7
   ]
 }

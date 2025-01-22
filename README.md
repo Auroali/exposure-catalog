@@ -1,7 +1,8 @@
 # Exposure Catalog
 
 [Exposure](https://modrinth.com/mod/exposure) addon that adds an entity catalog
-that can be filled with the camera.
+that can be filled with the camera. Heavily inspired
+by [Webfishing](https://store.steampowered.com/app/3146520/WEBFISHING/)
 
 ## Filling the Catalog
 
