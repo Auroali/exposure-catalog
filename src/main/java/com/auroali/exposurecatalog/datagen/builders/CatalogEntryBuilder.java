@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class CatalogEntryBuilder {
     final EntityType<?> type;
@@ -45,6 +46,10 @@ public class CatalogEntryBuilder {
         return this.scale(new Vec3(x, y, z));
     }
 
+    public CatalogEntryBuilder scale(double scale) {
+        return this.scale(new Vec3(scale, scale, scale));
+    }
+    
     public CatalogEntryBuilder description(Component text) {
         this.description = text;
         return this;
@@ -52,6 +57,10 @@ public class CatalogEntryBuilder {
 
     public CatalogEntryBuilder description(String text) {
         return this.description(Component.literal(text));
+    }
+
+    public CatalogEntryBuilder description(Function<EntityType<?>, Component> descriptionProvider) {
+        return this.description(descriptionProvider.apply(this.type));
     }
 
     public CatalogEntryBuilder tag(Consumer<CompoundTag> tag) {

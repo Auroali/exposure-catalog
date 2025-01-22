@@ -3,13 +3,13 @@
   "id": "exposurecatalog",
   "version": "${version}",
   "name": "Exposure Catalog",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Adds a catalog for recoding entities via the Exposure camera",
   "authors": [
-    "Me!"
+    "Auroali"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/Auroali/exposure-catalog",
+    "issues": "https://github.com/Auroali/exposure-catalog/issues"
   },
   "license": "MIT",
   "icon": "assets/exposurecatalog/icon.png",
@@ -37,10 +37,8 @@
     "java": ">=17",
     "fabric-api": "*",
     "exposure": ">=1.7.7",
-    "cardinal-components-base": ">=5.2.2"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "cardinal-components-base": ">=5.2.2",
+    "cardinal-components-entity": ">=5.2.2"
   },
   "custom": {
     "cardinal-components": [

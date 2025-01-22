@@ -82,7 +82,9 @@ public class CatalogWidget extends AbstractWidget {
 
     protected Vec3 getOffsetForWidget(int width, int height) {
         Vec3 offset = this.entry.guiOffset();
-        return offset.add(width / 2.d, height, 0);
+        return offset
+          .multiply(0.0625d * width, -0.0625d * height, 0.0625d * width)
+          .add(width / 2.d, height, 0);
     }
 
     public Component getDescription() {

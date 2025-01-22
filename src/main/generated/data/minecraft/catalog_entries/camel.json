@@ -1,6 +1,6 @@
 {
   "description": {
-    "translate": "catalog.entry.minecraft.villager"
+    "translate": "catalog.entry.minecraft.camel"
   },
   "guiOffset": [
     0.0,
@@ -8,8 +8,8 @@
     0.0
   ],
   "guiScale": [
-    1.0,
-    1.0,
-    1.0
+    0.85,
+    0.85,
+    0.85
   ]
 }

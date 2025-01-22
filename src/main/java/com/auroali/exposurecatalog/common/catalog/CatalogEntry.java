@@ -5,8 +5,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 
@@ -44,6 +48,16 @@ public record CatalogEntry(EntityType<?> entity, Vec3 guiOffset, Vec3 guiScale, 
             tag = CompoundTag.CODEC.parse(JsonOps.INSTANCE, object.get("nbt"))
               .resultOrPartial(ExposureCatalog.LOGGER::error)
               .orElse(null);
+        }
+
+        // warn if a description is missing a translation key in dev
+        if (
+          FabricLoader.getInstance().isDevelopmentEnvironment()
+            && text != null
+            && text.getContents() instanceof TranslatableContents contents
+        ) {
+            if (!Language.getInstance().has(contents.getKey()))
+                ExposureCatalog.LOGGER.warn("Untranslated description key {} for catalog entry {}", contents.getKey(), BuiltInRegistries.ENTITY_TYPE.getKey(entity));
         }
 
         return new CatalogEntry(
